@@ -1,5 +1,5 @@
 from pathlib import Path
-
+import pygame
 class Gamestats:
     """Store the changing statistics in the horizonal game"""
 

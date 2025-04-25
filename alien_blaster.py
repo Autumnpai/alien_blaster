@@ -23,9 +23,12 @@ class Horizongame:
         pygame.mixer.init()  # Initialize the mixer for sound effects
         self.clock = pygame.time.Clock()
         self.settings = Settings()
+        self.stats = Gamestats(self)
+
         self.screen = pygame.display.set_mode(
             (self.settings.screen_width, self.settings.screen_height))
-        pygame.display.set_caption("Horizontal Game")
+
+        pygame.display.set_caption("Alien Blaster")
 
         # Load sound effects
         self.bullet_sound = pygame.mixer.Sound("sounds/bullet.wav")
@@ -44,7 +47,7 @@ class Horizongame:
         self._create_fleet()
         self._create_buttons()
 
-        self.stats = Gamestats(self)
+
         self.sb = Scoreboard(self)
 
         self.game_active = False
@@ -79,6 +82,7 @@ class Horizongame:
             self.hard_button.draw_button()
             self.hell_button.draw_button()
             self.quit_button.draw_button()
+            self.wf_button.draw_button()
 
         pygame.display.flip()
     
@@ -240,21 +244,21 @@ class Horizongame:
     def _create_buttons(self):
         """Create all buttons."""
         # Define button labels
-        button_data = ["EASY", "NORMAL", "HARD", "HELL", "QUIT"]
+        button_data = ["EASY", "NORMAL", "HARD", "HELL", "W/F", "QUIT"]
         # Create buttons dynamically
         spacing = 72
         self.buttons = []  # Store all buttons in a list
         for index, label in enumerate(button_data):  # Use enumerate to get the index
-            if label == "QUIT":
-                button = Button(self, label, (200, 0, 0))
+            button = Button(self, label)  # Use default color
+            if label == "QUIT" or label == "W/F":
+                button.rect.y = 240 + index * spacing
             else:
-                button = Button(self, label)  # Use default color
-            button.rect.y = 268 + index * spacing
+                button.rect.y = 200 + index * spacing
             button.msg_image_rect.center = button.rect.center
             self.buttons.append(button)
 
         # Assign buttons to specific attributes for easy access
-        self.easy_button, self.normal_button, self.hard_button, self.hell_button, self.quit_button = self.buttons
+        self.easy_button, self.normal_button, self.hard_button, self.hell_button, self.wf_button, self.quit_button  = self.buttons
 
     def _check_buttons(self, mouse_pos):
         """Start a new game when the player clicks one of the buttons."""
@@ -272,6 +276,8 @@ class Horizongame:
             self._start_game()
             for each in range(24):
                 self.settings.increase_speed()
+        elif self.wf_button.rect.collidepoint(mouse_pos):
+            self._switch_window_fullscreen()
         elif self.quit_button.rect.collidepoint(mouse_pos):
             self._save_exit()
 
@@ -295,6 +301,17 @@ class Horizongame:
 
         # Hide the mouse cursor.
         pygame.mouse.set_visible(False)
+
+    def _switch_window_fullscreen(self):
+        """Switch between fullscreen and windowed mode."""
+        self.settings.fullscreen = not self.settings.fullscreen
+        if self.settings.fullscreen:
+            self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+            self.settings.screen_width = self.screen.get_rect().width
+            self.settings.screen_height = self.screen.get_rect().height
+        else:
+            self.screen = pygame.display.set_mode(
+                (self.settings.screen_width, self.settings.screen_height))
 
     def _save_exit(self):
         """Save the high score to highscore.txt and exit."""
