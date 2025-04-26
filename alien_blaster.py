@@ -46,8 +46,6 @@ class Horizongame:
         self.explosions = pygame.sprite.Group()  # Group to manage explosions
         self._create_fleet()
         self._create_buttons()
-
-
         self.sb = Scoreboard(self)
 
         self.game_active = False
@@ -146,6 +144,12 @@ class Horizongame:
             self.alien_hit_sound.play()  # Play alien hit sound
 
         if not self.aliens:
+            while self.explosions:
+                self._update_screen()
+                self.explosions.update()
+                self.alien_hit_sound.play()
+                self.clock.tick(60)
+            sleep(2.5)
             self._start_new_level()
     
     def _start_new_level(self):
@@ -219,6 +223,7 @@ class Horizongame:
             self.explosions.update()
             self.alien_hit_sound.play()
             self.clock.tick(60)  # Maintain the frame rate
+        sleep(2.5)
 
         if self.stats.plane_left > 0:
             # Decrement plane_left, and update scoreboard.
@@ -230,7 +235,6 @@ class Horizongame:
             # Create a new fleet and center the plane.
             self._create_fleet()
             self.plane.center_plane()
-            sleep(1.0)
         else:
             self.game_active = False
             pygame.mouse.set_visible(True)

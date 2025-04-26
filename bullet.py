@@ -13,6 +13,7 @@ class Bullet(pygame.sprite.Sprite):
         self.image = pygame.image.load("images/missile.png")
         self.rect = self.image.get_rect()
         self.rect.midright = h_game.plane.rect.midright
+        self.rect.x -= 4 # make it a little backward
 
         self.x = float(self.rect.x)
     
