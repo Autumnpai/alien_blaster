@@ -81,6 +81,10 @@ class Horizongame:
             self.hell_button.draw_button()
             self.quit_button.draw_button()
             self.wf_button.draw_button()
+            pygame.mouse.set_visible(True)
+        
+        if self.game_active:
+            pygame.mouse.set_visible(False)
 
         pygame.display.flip()
     
@@ -98,6 +102,8 @@ class Horizongame:
                     self._save_exit()
                 if event.key == pygame.K_SPACE:
                     self._fire_bullet()
+                if event.key == pygame.K_ESCAPE:
+                    self.game_active = not self.game_active
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_UP:
                     self.plane.moving_up = False
@@ -237,7 +243,7 @@ class Horizongame:
             self.plane.center_plane()
         else:
             self.game_active = False
-            pygame.mouse.set_visible(True)
+            # pygame.mouse.set_visible(True)
 
     def _check_aliens_leftedge(self):
         for alien in self.aliens.sprites():
@@ -304,7 +310,7 @@ class Horizongame:
         self.plane.center_plane()
 
         # Hide the mouse cursor.
-        pygame.mouse.set_visible(False)
+        # pygame.mouse.set_visible(False)
 
     def _switch_window_fullscreen(self):
         """Switch between fullscreen and windowed mode."""
